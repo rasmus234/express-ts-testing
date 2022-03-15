@@ -1,0 +1,4 @@
+
+#GET localhost:3000/api/products
+
+GET localhost:3000/api/products/5
