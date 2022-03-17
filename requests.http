@@ -1,4 +1,27 @@
+GET http://localhost:3000/anonymous
+Accept: application/json
+
+###
+GET http://localhost:3000/regular
+Accept: application/json
+
+###
+GET http://localhost:3000/customers
+
+###
+GET localhost:3000/role
+
+
+###
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{"role": "1"}
+
+###
 
 #GET localhost:3000/api/products
 
 GET localhost:3000/api/products/5
+
+

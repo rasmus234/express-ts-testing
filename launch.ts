@@ -1,9 +1,9 @@
 
-import {routes} from './0_routes/routes'
+import {app} from './0_routes/app'
 
 const port = 3000;
 
-const server = routes.listen(port, () =>{
+export const server = app.listen(port, () =>{
     console.log('This server is listening at port:' + port);
 } );
 

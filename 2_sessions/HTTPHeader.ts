@@ -1,4 +1,4 @@
-const headerkey:string = 'x-access-token';
+const headerkey:string = 'set-cookie';
 
 class HTTPHeader{
      public static getToken(request:any):string{
