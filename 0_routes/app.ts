@@ -5,9 +5,12 @@ import * as dotenv from 'dotenv';
 import {AccessToken} from '../2_sessions/AccessToken';
 import {Role} from '../3_models/Role';
 import cookieParser from "cookie-parser";
-dotenv.config();
-const app = express();
+import {AbstractEndpoint} from "../1_endpoints/AbstractEndpoint";
+import {Resource} from "../3_models/Resource";
 
+dotenv.config();
+
+const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(cookieParser())
@@ -41,37 +44,17 @@ app.post('/api/products', (req, res) => {
     return res.status(201).json(data);
 });
 
-/*       AUTHORIZATION DEMO     */
-app.get('/value', (req, res) => {
-
-    // Just proving that the secret i accessable!!!
-    const key = process.env.TOKEN_SECRET;
-    console.log("The secret key was:" + key);
-
-    const adminToken: string = AccessToken.generateToken(Role.admin);
-
-    const decryptedAdminRole: Role = AccessToken.userRole(adminToken);
-
-    const regularToken: string = AccessToken.generateToken(Role.regular);
-
-    const decryptedRegularRole: Role = AccessToken.userRole(regularToken);
-
-    return res.status(200).json({'done': 'yes'});
-});
-
+//generates a cookie with a jwt with the role coming from the request's body
 app.post('/login', (req, res) => {
-
-    // (1) CHECKING THE userName + password ....
-    // IF okay then the token is generated according to the role
-    // always okay in this demo
     const roleFromBody: number = req.body.role;
     const role: Role = roleFromBody as Role
-    const adminToken: string = AccessToken.generateToken(role);
-    res.cookie("jwt", adminToken)
+    const token: string = AccessToken.generateToken(role);
+    res.cookie("jwt", token)
     return res.status(200).json({'token': 'delivered'});
 
 });
 
+//gets the current role
 app.get("/role", (req, res) => {
     const token = req.cookies.jwt
     const role = AccessToken.userRole(token)
@@ -81,35 +64,16 @@ app.get("/role", (req, res) => {
 
 // route just for admins
 app.get('/admin', (req, res) => {
-
-    const roleRequired = Role.admin
-    const token = req.cookies.jwt
-    const role = AccessToken.userRole(token)
-    console.log(token, role)
-    if (role >= roleRequired) {
-        return res.status(200).json({admin: "admin"})
-    }
-    return res.status(403).json({})
+    return AbstractEndpoint.produceResponse(200,Role.admin, Resource.customer, req,res).json({})
 });
-
+// route just for regular users
 app.get("/regular", (req, res) => {
-    const roleRequired = Role.regular
-    const token = req.cookies.jwt
-    const role = AccessToken.userRole(token)
-    if (role >= roleRequired) {
-        return res.status(200).json({regular: "regular"})
-    }
-    return res.status(403).json({})
+    return AbstractEndpoint.produceResponse(200,Role.regular, Resource.products, req,res).json({})
 })
 
+// route just for anonymous users
 app.get("/anonymous", (req, res) => {
-    const roleRequired = Role.anonymous
-    const token = req.cookies.jwt
-    const role = AccessToken.userRole(token)
-    if (role >= roleRequired) {
-        return res.status(200).json({anonymous: "anon"})
-    }
-    return res.status(403).json({})
+    return AbstractEndpoint.produceResponse(200,Role.anonymous, Resource.products, req,res).json({})
 })
 
 // the default (all other non-existing routes)

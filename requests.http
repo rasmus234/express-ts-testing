@@ -6,7 +6,7 @@ GET http://localhost:3000/regular
 Accept: application/json
 
 ###
-GET http://localhost:3000/customers
+GET http://localhost:3000/admin
 
 ###
 GET localhost:3000/role
@@ -16,7 +16,7 @@ GET localhost:3000/role
 POST http://localhost:3000/login
 Content-Type: application/json
 
-{"role": "1"}
+{"role": "3"}
 
 ###
 

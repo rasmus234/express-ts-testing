@@ -1,8 +1,7 @@
 import {AccessToken} from "../2_sessions/AccessToken";
 import {Role} from "../3_models/Role";
 import {server} from "../launch";
-
-const request = require("supertest");
+import request from "supertest";
 
 
 describe("tests token encryption and decryption", () => {
@@ -32,6 +31,9 @@ describe("tests the /products endpoint", () => {
     it("should return a collection of products", async () => {
         const response = await request(server).get("/api/products")
         expect(response.status).toBe(200)
+        const data = response.body as any[]
+        expect(data.find(product => product.no === 33)).toBeTruthy()
+        expect(data.find(product => product.no === 45)).toBeTruthy()
 
     })
     it('should return status 201 and the same response body', async () => {
@@ -50,6 +52,7 @@ describe("tests the default wrong route", () => {
 })
 
 describe("Combinational testing of the role based security system", () => {
+
     describe("as role: admin", () => {
 
         const agent = request.agent(server)
@@ -104,7 +107,7 @@ describe("Combinational testing of the role based security system", () => {
             const response = await agent.get("/admin")
             expect(response.status).toBe(403)
         })
-        it("should return 200", async () => {
+        it("should return 403", async () => {
             const response = await agent.get("/regular")
             expect(response.status).toBe(403)
         })
