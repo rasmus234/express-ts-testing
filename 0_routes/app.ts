@@ -7,6 +7,8 @@ import {Role} from '../3_models/Role';
 import cookieParser from "cookie-parser";
 import {AbstractEndpoint} from "../1_endpoints/AbstractEndpoint";
 import {Resource} from "../3_models/Resource";
+import {DB} from "../2_sessions/DB";
+import {Api} from "../2_sessions/Api";
 
 dotenv.config();
 
@@ -15,8 +17,14 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(cookieParser())
 app.use(express.static('public'));
-const urlencode = bodyParser.urlencoded({extended: true});
+bodyParser.urlencoded({extended: true});
 
+DB.connect().then(() => {
+    console.log('Connected to DB');
+});
+Api.getAllProducts().then(value => {
+    console.log(value);
+});
 /*
    The routes to using REST, just emmulating the data
 */
